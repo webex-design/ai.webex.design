@@ -19,7 +19,7 @@ jobs:
     - name: ng build
       run: npm run build-static repo='${{ github.repository }}'
     - name: Push git subdirectory as branch
-      uses: s0/git-publish-subdir-action@v2.5.1
+      uses: s0/git-publish-subdir-action@v2.6.0
       env:
         REPO: self
         BRANCH: gh-pages
