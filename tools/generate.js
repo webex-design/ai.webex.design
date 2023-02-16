@@ -43,7 +43,7 @@ class NgGenerator {
         let commands = [
             `cd ${root}`,
             `ng generate module ${name} ${routeForModule}`,
-            `ng generate c ${name} --module=${name} --export=true --prefix=mds --skip-tests --style=scss`
+            `ng generate c ${name} --module=${name} --export=true --prefix=webex --skip-tests --style=scss`
         ];
         return new Promise((resolve, reject)=>{
             exec(commands.join(' && '), (err, stdout, stderr) => {

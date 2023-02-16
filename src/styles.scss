@@ -16,7 +16,7 @@
 * {
     font-family: CiscoSansTT, Arial, Helvetica, sans-serif;
     margin: 0px;
-    height: 0px;
+    padding: 0px;
     color: colors.$font-primary;
     text-decoration: none;
 }
@@ -30,12 +30,57 @@ body{
   @include mixins.placeholder(100%, 6rem);
 }
 
-.container-full {
-  @include mixins.container();
+button {
+  @include mixins.block(auto, 2rem, inline-block);
+  padding: 0 0.5rem;
+  margin-right: 1rem;
+  background-color: colors.$gray-50;
+  border: 1px solid colors.$gray-30;
+  border-radius: 0.25rem;
+  text-align: center;
+  cursor: pointer;
+
+  &:hover {
+    background-color: colors.$gray-70;
+  }
 }
 
-.container-middle {
-  @include mixins.container();
-  max-width: 2560px;
-  margin: 0 auto;
+.button-blue {
+  background-color: colors.$blue-50;
+  border-color: colors.$blue-30;
+
+  &:hover {
+    background-color: colors.$blue-70;
+  }
+}
+
+.button-red {
+  background-color: colors.$red-50;
+  border-color: colors.$red-30;
+
+  &:hover {
+    background-color: colors.$red-70;
+  }
+}
+
+.button-green {
+  background-color: colors.$green-50;
+  border-color: colors.$green-30;
+
+  &:hover {
+    background-color: colors.$green-70;
+  }
+}
+
+.button-orange {
+  background-color: colors.$orange-50;
+  border-color: colors.$orange-30;
+
+  &:hover {
+    background-color: colors.$orange-70;
+  }
+}
+
+.hide {
+  display: none;
 }

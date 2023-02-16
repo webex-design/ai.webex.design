@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { ConModule } from './con';
 import { DescriptionModule } from './description';
 import { FooterModule } from './footer';
 import { HeaderModule } from './header';
@@ -6,14 +7,16 @@ import { VideoModule } from './video';
 
 @NgModule({
   exports: [
-    FooterModule,
+    ConModule,
     DescriptionModule,
+    FooterModule,
     HeaderModule,
     VideoModule
   ],
   imports: [
-    FooterModule,
+    ConModule,
     DescriptionModule,
+    FooterModule,
     HeaderModule,
     VideoModule
   ],
