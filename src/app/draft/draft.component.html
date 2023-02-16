@@ -1,1 +1,37 @@
-<p>draft works!</p>
+<div #loadingCon>Loading </div>
+<div #appCon class='hide'>
+    <webex-con>
+        <webex-description
+        primary="Webex AI Draft"
+        secondary="Draw a draft or upload an image to search Momentum icons.
+        <br>Currenttly we only test momentum <a target='_blank' href='https://www.figma.com/file/SXK8Gb5tMlN9xiG2cC4OBu/Assets---Icon-Library?node-id=1001%3A2553'>Presence icon</a>"
+        className="middle"
+        ></webex-description>
+        <div class="canvas" #canvasCon></div>
+        <img #hideImage class="hide" (load)="onHideImgLoad()"/>
+        <input class='hide' #iptUpload (change)="uploadImage($event)" type="file" accept="image/png, image/jpeg" />
+        <div class="list-con">
+            <button class="button-blue" (click)="clearCanvas()" >clear canvas</button>
+            <button class="button-orange" (click)="clickUploadBtn()">upload JPG/PNG</button>
+            <button class="button-red" (click)="predict()">Predict</button>
+        </div>
+        <webex-description
+        primary="Result"
+        secondary="Select the right answer to help us to improve the AI model."
+        className="small"
+        ></webex-description>
+        <div class="list-con">
+            <img #imgPredict />
+        </div>
+        <webex-description
+        primary="Other Results"
+        className="small"
+        ></webex-description>
+        <div class="list-con">
+            <a>...</a>
+        </div>
+        <div class="list-con">
+            <button class="button-green">This is what I need!</button>
+        </div>
+    </webex-con>
+</div>

@@ -1,7 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, HostListener, ViewChild, ViewContainerRef } from '@angular/core';
-import { 
-   Responsive
-} from '@lib';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ViewContainerRef } from '@angular/core';
 
 @Component({
    templateUrl: './home.component.html',
@@ -10,16 +7,12 @@ import {
 })
 export class HomeComponent implements AfterViewInit {
 
-   @HostListener('window:resize', ['$event']) onResize(e: Event): void {
-      Responsive.resize();
-   }
-
    constructor(private viewContainerRef: ViewContainerRef) {
 
    }
 
    ngAfterViewInit() {
-      Responsive.resize();
+
    }
 
 }
