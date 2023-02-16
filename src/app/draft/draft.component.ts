@@ -1,7 +1,9 @@
 import { Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import Draw from 'draw-on-canvas';
 import * as tf from "@tensorflow/tfjs";
-import * as imagesData from '../../assets/data/draft/images/_augment_config.json';
+import * as _imagesData from '../../assets/data/draft/images/_augment_config.json';
+
+const imagesData:any = _imagesData;
 
 @Component({
   selector: 'mds-draft',
@@ -74,11 +76,8 @@ export class DraftComponent implements AfterViewInit {
                     maxIndex = i;
                 }
             });
-            let idx = imagesData.outputs.findIndex((a:any)=>{
-                return a===maxIndex;
-            }) - 1;
             
-            this.imgPredict.nativeElement.src=`./assets/data/draft/images/${idx}.jpg`;
+            this.imgPredict.nativeElement.src=`./assets/data/draft/images/${maxIndex}.jpg`;
         });
     }); 
   }
