@@ -21,14 +21,14 @@
         className="small"
         ></webex-description>
         <div class="list-con">
-            <img #imgPredict />
+            <img *ngFor="let item of most" [src]="getImageUrl(item.index)" /> 
         </div>
         <webex-description
         primary="Other Results"
         className="small"
         ></webex-description>
         <div class="list-con">
-            <a>...</a>
+            <img *ngFor="let item of others" [src]="getImageUrl(item.index)" /> 
         </div>
         <div class="list-con">
             <button class="button-green">This is what I need!</button>
