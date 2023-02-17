@@ -1,9 +1,15 @@
-import { Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import Draw from 'draw-on-canvas';
 import * as tf from "@tensorflow/tfjs";
 import * as _imagesData from '../../assets/data/draft/images/_augment_config.json';
 
 const imagesData:any = _imagesData;
+
+type outpair = {
+  value: number;
+  index: number;
+};
+
 
 @Component({
   selector: 'mds-draft',
@@ -15,6 +21,8 @@ export class DraftComponent implements AfterViewInit {
   draw: Draw;
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
+  most: outpair[]=[];
+  others: outpair[]=[];
   model:any;
   
   @ViewChild('iptUpload') iptUpload: ElementRef;
@@ -22,10 +30,17 @@ export class DraftComponent implements AfterViewInit {
   @ViewChild('appCon') appCon: ElementRef;
   @ViewChild('loadingCon') loadingCon: ElementRef;
   @ViewChild('hideImage') hideImage: ElementRef;
-  @ViewChild('imgPredict') imgPredict: ElementRef;
 
-  constructor() { 
+  constructor(private cd: ChangeDetectorRef) { 
 
+  }
+
+  forceUpdate() {
+    Promise.resolve().then(()=>{
+      if (this.cd) {
+        this.cd.detectChanges();
+      }
+    });
   }
 
   ngAfterViewInit(): void {
@@ -60,6 +75,10 @@ export class DraftComponent implements AfterViewInit {
     }
   }
 
+  getImageUrl(index: string | number) {
+    return `./assets/data/draft/images/${index}.jpg`;
+  }
+
   onHideImgLoad() {
     tf.tidy(()=>{
         let imageT = tf.browser.fromPixels(this.hideImage.nativeElement, 1);
@@ -68,16 +87,19 @@ export class DraftComponent implements AfterViewInit {
         preTensor.array().then((arr:any)=>{
             let out = arr[0];
             //this.info3(out.map(n=>n.toFixed(4)));
-            let max=0;
-            let maxIndex=0;
-            out.forEach((v:any,i:any)=>{
-                if(v>max) {
-                    max = v;
-                    maxIndex = i;
-                }
+            let _out = out.map((v:number,i:number)=>{
+              return {
+                value: v,
+                index: i
+              }
+            }).sort((a:outpair,b:outpair)=>{
+              return b.value - a.value;
             });
-            
-            this.imgPredict.nativeElement.src=`./assets/data/draft/images/${maxIndex}.jpg`;
+
+            this.most = _out.splice(0,3);
+            this.others = _out;
+            this.forceUpdate();
+
         });
     }); 
   }
