@@ -35,7 +35,7 @@ export class HandDrawIconComponent implements AfterViewInit, OnDestroy {
   decoderModel:tf.LayersModel;
   encoderModel:tf.LayersModel;
   optimizer:any;
-  epochs:number = 2000;
+  epochs:number = 3000;
   vaeModel:tf.LayersModel;
   canTrain:boolean = false;
   predictSlot = [[0,0],[0,1],[1,0],[0,0]];
@@ -221,6 +221,8 @@ export class HandDrawIconComponent implements AfterViewInit, OnDestroy {
               });
             }
           } else {
+            console.log(`Now you can click 'stop training' button. <bt>Then click 'predict' button to check the results.`);
+            this.progessTag.nativeElement.innerHTML = `Now you can click 'stop training' button. <bt>Then click 'predict' button to check the results.`;
             tf.dispose([images4D, batches]);
             resolve(1);
           }
