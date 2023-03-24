@@ -17,8 +17,8 @@
 <div #appCon>
     <webex-con>
         <webex-description
-        primary="Draw at least {{ leastNum }} icons"
-        secondary="You 've already draw {{ handDrawImages.length }} icons"
+        primary="Watch how AI learn your painting."
+        secondary="Draw at least {{ leastNum }} icons. You 've already drawn {{ handDrawImages.length }} icons"
         className="middle"
         ></webex-description>
         <div class="canvas" #canvasCon></div>
@@ -27,15 +27,17 @@
             <button class="button-blue" (click)="clearCanvas()" >clear canvas</button>
             <button class="button-orange" (click)="openUploader()">upload images</button>
             <button class="button-orange" (click)="addhandDraw()">add canvas</button>
-        </div><div class="list-con">
-            <input class="input" type="number" [(ngModel)]="epochs"  min="300" max="5000" step="100" onKeyDown="return false"/>
+        </div>
+        <div class="list-con">
+            <input *ngIf="handDrawImages.length>=leastNum" class="input" type="number" [(ngModel)]="epochs"  min="300" max="5000" step="100" onKeyDown="return false"/>
             <button *ngIf="handDrawImages.length>=leastNum" class="button-red highlight-purple" (click)="train()">Train model</button>
             <button *ngIf="canPredict" class="button-red highlight-orange" (click)="predict()">Predict</button>
         </div>
         <webex-description
-        primary="We will use there images to train model"
-        secondary="1. Click 'add to data' button to confirm your image
-        <br>2. If you want to remove the image, click 'X' at the bottom of image. "
+        primary="We will use these images to train AI model"
+        secondary="1. Click 'add canvas' button to confirm your image.
+        <br>2. You can also click 'upload images' button to upload local images.
+        <br>3. If you want to remove the image, click 'X' at the bottom of image. "
         className="middle"
         ></webex-description>
         <div class="list-con" #handDrawImagesCon>
@@ -46,8 +48,7 @@
         </div>
         <div #predictCon>
             <webex-description
-            primary="AI IMAGES"
-            secondary="Here are the icons we generated for you."
+            primary="AI Generated IMAGES"
             className="small"
             ></webex-description>
             <div class="predict-images">
