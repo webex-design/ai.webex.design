@@ -10,6 +10,10 @@ const routes: Routes = [{
   loadChildren: () => import('./draft/draft.module').then(m => m.DraftModule),
   data: { navIndex: 2 }
 },{
+  path: 'demo',
+  loadChildren: () => import('./demo/demo.module').then(m => m.DemoModule),
+  data: { navIndex: 2 }
+},{
   path: 'under-construction',
   loadChildren: () => import('./under-construction/under-construction.module').then(m => m.UnderConstructionModule)
 }];

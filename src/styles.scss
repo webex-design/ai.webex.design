@@ -45,6 +45,15 @@ button {
   }
 }
 
+.input {
+  @include mixins.block(auto, 2rem, inline-block);
+  color: black;
+  margin-right: 1rem;
+  border: 1px solid colors.$gray-30;
+  text-indent: 0.5rem;
+  border-radius: 0.25rem;
+}
+
 .button-blue {
   background-color: colors.$blue-50;
   border-color: colors.$blue-30;
@@ -82,5 +91,35 @@ button {
 }
 
 .hide {
-  display: none;
+  display: none!important;
 }
+
+.mask {
+  @include mixins.block(100vw, 100vh);
+  @include mixins.position(0, 0, fixed);
+
+  line-height: 100%;
+  background-color: rgba(0,0,0,0.85);
+  z-index: 1000;
+
+  text-align: center;
+}
+
+.highlight-purple {
+  box-shadow: 0 0 .2rem #fff,
+            0 0 .2rem #fff,
+            0 0 2rem #bc13fe,
+            0 0 0.8rem #bc13fe,
+            0 0 2.8rem #bc13fe,
+            inset 0 0 1.3rem #bc13fe; 
+}
+
+.highlight-orange {
+  box-shadow: 0 0 .2rem #fff,
+            0 0 .2rem #fff,
+            0 0 2rem colors.$orange-30,
+            0 0 0.8rem colors.$orange-30,
+            0 0 2.8rem colors.$orange-30,
+            inset 0 0 1.3rem colors.$orange-30; 
+}
+ 
