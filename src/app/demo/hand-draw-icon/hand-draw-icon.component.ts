@@ -11,6 +11,7 @@ const TRAIN_CONFIG = {
 };
 
 const REG_DATAPNG = /^data\:image\/png\;/i;
+const TOTAL_OUTPUT = 50;
 
 const VAE_OPT:vaeOpts = {
   originalDim: TRAIN_CONFIG.IMAGE_WIDTH*TRAIN_CONFIG.IMAGE_HEIGHT*1,
@@ -38,15 +39,7 @@ export class HandDrawIconComponent implements AfterViewInit, OnDestroy {
   epochs:number = 3000;
   vaeModel:tf.LayersModel;
   canTrain:boolean = false;
-  predictSlot = [[0,0],[0,1],[1,0],[0,0]];
-  /*
-  predictSlot = [
-    [0,0,0,0],[0,0,0,1],[0,0,1,0],[0,0,1,1],
-    [0,1,0,0],[0,1,0,1],[0,1,1,0],[0,1,1,1],
-    [1,0,0,0],[1,0,0,1],[1,0,1,0],[1,0,1,1],
-    [1,1,0,0],[1,1,0,1],[1,1,1,0],[1,1,1,1]
-  ];
-  */
+  predictSlot = new Array(TOTAL_OUTPUT);
   
   @ViewChild('iptUpload') iptUpload: ElementRef;
   @ViewChild('progessTag') progessTag: ElementRef;
@@ -267,7 +260,8 @@ export class HandDrawIconComponent implements AfterViewInit, OnDestroy {
       let imageTags = Array.from(this.predictCon.nativeElement.getElementsByTagName('canvas'));
       let todo = imageTags.length;
       imageTags.forEach((tag,index)=>{
-        const targetZ = tf.tensor(this.predictSlot[index]).expandDims();
+        //const targetZ = tf.tensor(this.predictSlot[index]).expandDims();
+        const targetZ = tf.randomUniform([VAE_OPT.latentDim],0,1).expandDims()
         this.preview(targetZ, tag).then(()=>{
           tf.dispose([targetZ]);
           todo--;
