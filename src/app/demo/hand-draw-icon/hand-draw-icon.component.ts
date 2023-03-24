@@ -259,9 +259,10 @@ export class HandDrawIconComponent implements AfterViewInit, OnDestroy {
     if(this.decoderModel) {
       let imageTags = Array.from(this.predictCon.nativeElement.getElementsByTagName('canvas'));
       let todo = imageTags.length;
+      console.log(VAE_OPT.intermediateDim, this.handDrawImages.length);
       imageTags.forEach((tag,index)=>{
         //const targetZ = tf.tensor(this.predictSlot[index]).expandDims();
-        const targetZ = tf.randomUniform([VAE_OPT.latentDim],0,1).expandDims()
+        const targetZ = tf.randomUniform([VAE_OPT.latentDim, 2],-4,4);
         this.preview(targetZ, tag).then(()=>{
           tf.dispose([targetZ]);
           todo--;
