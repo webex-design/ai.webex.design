@@ -352,7 +352,7 @@ export class HandDrawIconComponent implements AfterViewInit, OnDestroy {
       }, 
       backgroundColor: '#fffff5',
       strokeColor: '#333333', 
-      strokeWeight: 4
+      strokeWeight: 8
     });
     this.canvas = canvasCon.querySelector('canvas') as HTMLCanvasElement;
     this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
