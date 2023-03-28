@@ -28,6 +28,7 @@
     "@tensorflow/tfjs-core": "^4.2.0",
     "@tensorflow/tfjs-node": "^4.2.0",
     "draw-on-canvas": "^1.2.0",
+    "jszip": "^3.10.1",
     "mframe": "^1.3.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.3.0",
