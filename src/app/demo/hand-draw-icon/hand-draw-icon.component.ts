@@ -143,7 +143,7 @@ export class HandDrawIconComponent implements AfterViewInit, OnDestroy {
           tf.dispose([_source, _resize, _div, _fixDix, _fixDix2]);
           return s;
         } else { // jpg
-          let s= _div.floor();
+          let s= _div.round();
           //tf need release memory
           tf.dispose([_source, _resize, _div]);
           return s;
