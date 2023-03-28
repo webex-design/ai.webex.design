@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, ElementRef, ViewChild, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import Draw from 'draw-on-canvas';
 import * as tf from "@tensorflow/tfjs";
+import * as JSZip from "jszip";
 import { keep, Tensor4D } from '@tensorflow/tfjs';
 import { encoder, decoder, vae, vaeLoss, vaeOpts } from './model';
 //vaeConifg
@@ -31,8 +32,10 @@ export class HandDrawIconComponent implements AfterViewInit, OnDestroy {
   ctx: CanvasRenderingContext2D;
   handDrawImages: any[]=[];
   canPredict = false;
+  hasPredicted = false;
   leastNum = 4;
   sourceData: Tensor4D;
+  sourceImages: any[];
   decoderModel:tf.LayersModel;
   encoderModel:tf.LayersModel;
   optimizer:any;
@@ -50,6 +53,7 @@ export class HandDrawIconComponent implements AfterViewInit, OnDestroy {
   @ViewChild('appCon') appCon: ElementRef;
   @ViewChild('loadingCon') loadingCon: ElementRef;
   @ViewChild('loadingCon2') loadingCon2: ElementRef;
+  @ViewChild('hideDownloadBtn') hideDownloadBtn: ElementRef;
 
   constructor(private cd: ChangeDetectorRef) { 
 
@@ -123,29 +127,59 @@ export class HandDrawIconComponent implements AfterViewInit, OnDestroy {
   }
 
   getAndAugmentImagesData() {
-    let images = Array.from((this.handDrawImagesCon.nativeElement as HTMLElement).getElementsByTagName('img'));
-    let sourceImages = images.map((image)=>{
-      let _source = tf.browser.fromPixels(image,1).asType("float32");
-      let _resize = tf.image.resizeBilinear(_source, [32,32]);
-      let _div = _resize.div(255);
+    return new Promise((resolve)=>{
+      let images = Array.from((this.handDrawImagesCon.nativeElement as HTMLElement).getElementsByTagName('img'));
 
-      if(REG_DATAPNG.test(image.src)) { // png
-        let _fixDix =_div.mul(-1);
-        let _fixDix2 = _fixDix.add(1);
-        let s= _fixDix2.floor();
-        //tf need release memory
-        tf.dispose([_source, _resize, _div, _fixDix, _fixDix2]);
-        return s;
-      } else { // jpg
-        let s= _div.floor();
-        //tf need release memory
-        tf.dispose([_source, _resize, _div]);
-        return s;
-      }
-    });
-    this.sourceData = tf.stack(sourceImages) as Tensor4D;
-    sourceImages.forEach((image)=>{
-      image.dispose(); // need manually dispose
+      let sourceImages = images.map((image)=>{
+        let _source = tf.browser.fromPixels(image,1).asType("float32");
+        let _resize = tf.image.resizeBilinear(_source, [TRAIN_CONFIG.IMAGE_WIDTH,TRAIN_CONFIG.IMAGE_HEIGHT]);
+        let _div = _resize.div(255);
+
+        if(REG_DATAPNG.test(image.src)) { // png
+          let _fixDix =_div.mul(-1);
+          let _fixDix2 = _fixDix.add(1);
+          let s= _fixDix2.floor();
+          //tf need release memory
+          tf.dispose([_source, _resize, _div, _fixDix, _fixDix2]);
+          return s;
+        } else { // jpg
+          let s= _div.floor();
+          //tf need release memory
+          tf.dispose([_source, _resize, _div]);
+          return s;
+        }
+      });
+
+      //save converted image
+      let todo = sourceImages.length;
+      this.sourceImages=[];
+
+      sourceImages.forEach((tensor3d:any, index)=>{
+        tf.browser.toPixels(tensor3d).then((uint8)=>{
+          todo--;
+
+
+          let canvas = document.createElement('canvas');
+          canvas.width = TRAIN_CONFIG.IMAGE_WIDTH;
+          canvas.height = TRAIN_CONFIG.IMAGE_HEIGHT;
+          let ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+          let imageData = ctx.createImageData(TRAIN_CONFIG.IMAGE_WIDTH, TRAIN_CONFIG.IMAGE_HEIGHT);
+          imageData.data.set(uint8);
+          ctx.putImageData(imageData, 0, 0);
+
+          this.sourceImages.push(canvas.toDataURL(`image/jpg`));
+
+          if(todo<=0) {
+            this.sourceData = tf.stack(sourceImages) as Tensor4D;
+            sourceImages.forEach((image)=>{
+              image.dispose(); // need manually dispose
+            });
+            resolve(1);   
+          }
+        });
+      });
+      // need sourceImages to dataUrl;
+
     });
   }
 
@@ -155,10 +189,11 @@ export class HandDrawIconComponent implements AfterViewInit, OnDestroy {
       this.canTrain = true;
       this.hidePredict();
       this.showloading();
-      this.getAndAugmentImagesData();
-
-      console.log('Data ready');
-      this._train(this.sourceData);
+      this.getAndAugmentImagesData()
+      .then(()=>{
+        console.log('Data ready');
+        this._train(this.sourceData);
+      });
     }
   }
   // imageLength=> images.length
@@ -259,7 +294,7 @@ export class HandDrawIconComponent implements AfterViewInit, OnDestroy {
     if(this.decoderModel) {
       let imageTags = Array.from(this.predictCon.nativeElement.getElementsByTagName('canvas'));
       let todo = imageTags.length;
-      console.log(VAE_OPT.intermediateDim, this.handDrawImages.length);
+      //console.log(VAE_OPT.intermediateDim, this.handDrawImages.length);
       imageTags.forEach((tag,index)=>{
         //const targetZ = tf.tensor(this.predictSlot[index]).expandDims();
         const targetZ = tf.randomUniform([VAE_OPT.latentDim, 2],-4,4);
@@ -268,6 +303,7 @@ export class HandDrawIconComponent implements AfterViewInit, OnDestroy {
           todo--;
           if(todo===0) {
             this.showPredict();
+            this.hasPredicted = true;
           }
         });
       });
@@ -327,6 +363,44 @@ export class HandDrawIconComponent implements AfterViewInit, OnDestroy {
     } else {
       console.warn('no content 2d');
     }
+  }
+
+  download() {
+    this.showloading2();
+    let zip = new JSZip.default();
+
+    if(this.sourceImages.length>0) {
+
+      this.sourceImages.forEach((datum,index)=>{
+        zip.file(`source/${index}.jpg`,  datum.split(',')[1], {base64: true});
+      });
+
+      if(this.hasPredicted) {
+        let imageTags = Array.from(this.predictCon.nativeElement.getElementsByTagName('canvas')) as HTMLCanvasElement[];
+        imageTags.forEach((canvas: HTMLCanvasElement, index) => {
+          let dataUrl = canvas.toDataURL("image/jpg");
+          zip.file(`ai/${index}.jpg`,  dataUrl.split(',')[1], {base64: true});
+        });
+      }
+
+      zip.generateAsync({ type: 'blob' }).then((content)=>{
+        const blobURL = window.URL.createObjectURL(content);
+        let btn_download = this.hideDownloadBtn.nativeElement as HTMLAnchorElement;
+        btn_download.href = blobURL;
+        btn_download.download = `webex-ai-icon.zip`;
+        btn_download.click();
+      }).catch((e)=>{
+        console.log('zip error', e);
+      }).finally(()=>{
+          this.hideLoading2();
+      });
+    }
+
+    //
+    //var base64 = dataUrl.split(',')[1];
+
+// create a new Buffer object from the base64 string
+    //var buffer = Buffer.from(base64, 'base64');
   }
 
   clearCanvas() {

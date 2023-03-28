@@ -10,7 +10,7 @@
 </div>
 <div class="mask hide" #loadingCon2>
     <webex-description
-        primary="Loading images......"
+        primary="Loading..."
         className="large"
     ></webex-description>
 </div>
@@ -29,9 +29,11 @@
             <button class="button-orange" (click)="addhandDraw()">add canvas</button>
         </div>
         <div class="list-con">
+            <a #hideDownloadBtn class="hide"></a>
             <input *ngIf="handDrawImages.length>=leastNum" class="input" type="number" [(ngModel)]="epochs"  min="300" max="5000" step="100" onKeyDown="return false"/>
             <button *ngIf="handDrawImages.length>=leastNum" class="button-red highlight-purple" (click)="train()">Train model</button>
             <button *ngIf="canPredict" class="button-red highlight-orange" (click)="predict()">Predict</button>
+            <button *ngIf="canPredict" (click)="download()">download</button>
         </div>
         <webex-description
         primary="We will use these images to train AI model"
