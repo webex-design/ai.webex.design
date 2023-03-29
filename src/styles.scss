@@ -30,7 +30,7 @@ body{
   @include mixins.placeholder(100%, 6rem);
 }
 
-button {
+button, .button {
   @include mixins.block(auto, 2rem, inline-block);
   padding: 0 0.5rem;
   margin-right: 1rem;

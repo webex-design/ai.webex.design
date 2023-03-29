@@ -2,8 +2,21 @@ import { Component, AfterViewInit, ElementRef, ViewChild, ChangeDetectorRef } fr
 import Draw from 'draw-on-canvas';
 import * as tf from "@tensorflow/tfjs";
 import * as _imagesData from '../../assets/data/draft/images/_augment_config.json';
+import { Tensor3D } from '@tensorflow/tfjs';
 
 const imagesData:any = _imagesData;
+
+const figmaLinks: Record<number, string> = {
+  0:'https://www.figma.com/file/SXK8Gb5tMlN9xiG2cC4OBu/Assets---Icon-Library?node-id=1386-1958&t=llOjxmgcexPeKjXH-4',
+  1:'https://www.figma.com/file/SXK8Gb5tMlN9xiG2cC4OBu/Assets---Icon-Library?node-id=1386-1933&t=llOjxmgcexPeKjXH-4',
+  2:'https://www.figma.com/file/SXK8Gb5tMlN9xiG2cC4OBu/Assets---Icon-Library?node-id=1386-1932&t=llOjxmgcexPeKjXH-4',
+  3:'https://www.figma.com/file/SXK8Gb5tMlN9xiG2cC4OBu/Assets---Icon-Library?node-id=1386-1952&t=llOjxmgcexPeKjXH-4',
+  4:'https://www.figma.com/file/SXK8Gb5tMlN9xiG2cC4OBu/Assets---Icon-Library?node-id=17381-2976&t=llOjxmgcexPeKjXH-4',
+  5:'https://www.figma.com/file/SXK8Gb5tMlN9xiG2cC4OBu/Assets---Icon-Library?node-id=2009-138&t=llOjxmgcexPeKjXH-4',
+  6:'https://www.figma.com/file/SXK8Gb5tMlN9xiG2cC4OBu/Assets---Icon-Library?node-id=1386-1948&t=llOjxmgcexPeKjXH-4',
+  7:'https://www.figma.com/file/SXK8Gb5tMlN9xiG2cC4OBu/Assets---Icon-Library?node-id=1386-1936&t=llOjxmgcexPeKjXH-4',
+  8:'https://www.figma.com/file/SXK8Gb5tMlN9xiG2cC4OBu/Assets---Icon-Library?node-id=1386-1934&t=llOjxmgcexPeKjXH-4'
+};
 
 type outpair = {
   value: number;
@@ -24,6 +37,7 @@ export class DraftComponent implements AfterViewInit {
   most: outpair[]=[];
   others: outpair[]=[];
   model:any;
+  fimgaIconLink:string="";
   
   @ViewChild('iptUpload') iptUpload: ElementRef;
   @ViewChild('canvasCon') canvasCon: ElementRef;
@@ -34,6 +48,25 @@ export class DraftComponent implements AfterViewInit {
   constructor(private cd: ChangeDetectorRef) { 
 
   }
+
+    flat(tensor:Tensor3D, isPNG?:boolean) {
+      let _div = tensor.div(255.0);
+
+      if(isPNG) { // png
+          let _fixDix =_div.mul(-1);
+          let _fixDix2 = _fixDix.add(1);
+          let s= _fixDix2.floor();
+          //tf need release memory
+          tf.dispose([tensor, _div, _fixDix, _fixDix2]);
+          return s;
+      } else { // jpg
+          let s= _div.round();
+          //tf need release memory
+          tf.dispose([tensor, _div]);
+          return s;
+      }
+  }
+
 
   forceUpdate() {
     Promise.resolve().then(()=>{
@@ -63,7 +96,7 @@ export class DraftComponent implements AfterViewInit {
       }, 
       backgroundColor: 'white', 
       strokeColor: '#333333', 
-      strokeWeight: 4
+      strokeWeight: 16
     });
     this.canvas = canvasCon.querySelector('canvas') as HTMLCanvasElement;
     this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -83,7 +116,9 @@ export class DraftComponent implements AfterViewInit {
     tf.tidy(()=>{
         let imageT = tf.browser.fromPixels(this.hideImage.nativeElement, 1);
         let imageT32 = tf.image.resizeBilinear(imageT.asType("float32"),[32,32]);
-        let preTensor = this.model.predict(tf.stack([imageT32]));
+        let image = this.flat(imageT32, true);
+        let preTensor = this.model.predict(tf.stack([image]));
+        console.log(image);
         preTensor.array().then((arr:any)=>{
             let out = arr[0];
             //this.info3(out.map(n=>n.toFixed(4)));
@@ -96,7 +131,9 @@ export class DraftComponent implements AfterViewInit {
               return b.value - a.value;
             });
 
-            this.most = _out.splice(0,3);
+            this.most = _out.splice(0,1);
+            let _fIndex = this.most[0].index as number;
+            this.fimgaIconLink = figmaLinks[_fIndex];
             this.others = _out;
             this.forceUpdate();
 
