@@ -1,0 +1,45 @@
+<div class="mask" #loadingCon>
+    <webex-description
+        primary="Thanks for your help!!!"
+        secondary="We are updating data..."
+        className="large"
+    ></webex-description>
+</div>
+<webex-con>
+    <progress class="progress-red" [value]='TOTAL' [max]='TOTALANDNEED'></progress>
+    <webex-description
+    [secondary]="'We got '+TOTAL+' images, still need '+NEED+' images.'"
+    className="small"
+    ></webex-description>
+    <webex-description
+    primary="Momentum Icon Collector"
+    secondary="1. Draw the icon we show you.
+    <br>2. Click 'add' button to confirm your image.
+    <br>3. If you want to remove the image, click 'X' at the bottom of image.
+    <br>4. If you have more than 4 images, click 'upload to server' button.
+    <br>5. Waiting for uploading, and draw the next icon. "
+    className="middle"
+    ></webex-description>
+    <webex-description
+    secondary="Please draw this icon."
+    className="small"
+    ></webex-description>
+    <img class="targetImg highlight-orange" [src]="imgUrl" />
+    <div class="canvas" #canvasCon></div>
+    <canvas height="32" width="32" class="hide" #hideCanvas></canvas>
+    <div class="list-con">
+        <button class="button-blue" (click)="clearCanvas()" >clear canvas</button>
+        <button class="button-red" (click)="add()">add</button>
+        <button *ngIf="handDrawImages.length>4"  class="button-red highlight-orange" (click)="upload()">upload to server</button>
+    </div>
+    <webex-description
+    primary="Icons to upload to server"
+    className="small"
+    ></webex-description>
+    <div class="list-con" #handDrawImagesCon>
+        <div class="list-card" *ngFor="let item of handDrawImages; let i=index;" >
+            <img [src]="item" width="32" height="32"/> 
+            <a  class="button-red" (click)="remove(i)">x</a>
+        </div>
+    </div>
+</webex-con>
