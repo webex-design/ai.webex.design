@@ -136,7 +136,7 @@ export class CollectComponent implements  AfterViewInit, OnDestroy {
           return v === minValue;
         });
         this.handDrawImages = [];
-        this.imgUrl = `../assets/momentum-icons/${this.imgIndex}/0.jpg`;
+        this.imgUrl = `assets/momentum-icons/${this.imgIndex}/0.jpg`;
         this.forceUpdate();
         this.hideLoading();
       } else {
