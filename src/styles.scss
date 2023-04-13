@@ -122,4 +122,18 @@ button, .button {
             0 0 2.8rem colors.$orange-30,
             inset 0 0 1.3rem colors.$orange-30; 
 }
+
+.progress-red {
+    box-sizing: border-box;
+    border: solid 0.15em #242b35;
+    width: 12.5em;
+    height: 1em;
+    border-radius: 0.5em;
+    background: linear-gradient(#191c23, #2d3341);
+    font: clamp(.625em, 7.5vw, 5em) monospace;
+	
+	&::-webkit-progress-bar { background: transparent }
+
+  --fill: linear-gradient(rgba(226, 102, 76, 0.65), transparent), repeating-linear-gradient(135deg, #a22215 0 0.25em, #be2a20 0 0.5em);
+}
  
