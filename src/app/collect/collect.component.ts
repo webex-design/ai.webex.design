@@ -131,10 +131,13 @@ export class CollectComponent implements  AfterViewInit, OnDestroy {
         this.NEED = _need;
         this.TOTALANDNEED = this.TOTAL + this.NEED;
         let minValue = Math.min.apply(null, _arrayData);
-
-        this.imgIndex= _arrayData.findIndex((v)=>{
-          return v === minValue;
+        let smallest:any[] = [];
+        _arrayData.forEach((value, index)=>{
+          if(value===minValue) {
+            smallest.push(index);
+          }
         });
+        this.imgIndex= smallest[Math.floor(Math.random()*smallest.length)];
         this.handDrawImages = [];
         this.imgUrl = `assets/momentum-icons/${this.imgIndex}/0.jpg`;
         this.forceUpdate();
