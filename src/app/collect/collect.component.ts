@@ -118,7 +118,7 @@ export class CollectComponent implements  AfterViewInit, OnDestroy {
     fireDatabase.get(this.refFolderData).then((snapshot) => {
       if (snapshot.exists()) {
         let _arrayData = snapshot.val() as any[];
-        let _stand = 20;
+        let _stand = 13;
         let _total = 0;
         let _need = 0;
         _arrayData.forEach((v)=>{
